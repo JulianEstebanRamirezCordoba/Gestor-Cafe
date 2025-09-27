@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head id="head"></head>
+<body>
+  <div id="header"></div>
+
+  <main>
+    <h2>Panel de Estadisticas</h2>
+
+    <section class="stats-dashboard">
+      <div class="stat-card">
+        <h3>Precio Nacional del Cafe</h3>
+        <p id="precioCafe">$ 2.920.000</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Sacos Totales en Bodega</h3>
+        <p id="totalSacos">0</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Valor Total del Inventario</h3>
+        <p id="valorInventario">$0</p>
+      </div>
+    </section>
+
+    <section class="stats-dashboard">
+      <div class="stat-card">
+        <h3>Precio Nacional del Cafe vs Bodegas</h3>
+        <canvas id="graficoCafe" width="300" height="200"></canvas>
+      </div>
+
+      <div class="container">
+        <h3>Bultos por Bodega</h2>
+        <canvas id="graficoBultos" width="300" height="200"></canvas>
+      </div>
+
+      <div class="stat-card" id="cardInventario">
+        <h3>Valor Total del Inventario por Bodega</h3>
+        <canvas id="graficoValores" width="300" height="50"></canvas>
+      </div>
+    </section>
+
+    <hr>
+    <h2>Valorizacion de Inventario</h2>
+    <section class="price-input">
+      <h2>Ingreso del precio actual del cafe</h2>
+      <form  id="coffeePriceForm">
+        <label for="bodegaSelect">Seleccione Bodega</label>
+          <select id="bodegaSelect">
+            <option value="">Seleccione Bodega</option>
+            <option value="B001">B001 - Caicedonia</option>
+            <option value="B002">B002 - Tulua</option>
+            <option value="B003">B003 - Sevilla</option>
+          </select>
+
+          <label for="coffeePrice">Precio por saco (COP)</label>
+          <input type="number" id="coffeePrice" name="coffeePrice" placeholder="Precio" required>
+          <button type="submit">Guardar Precio</button>
+      </form>
+      <p id="savedPrice"></p>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script src="js/inic.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

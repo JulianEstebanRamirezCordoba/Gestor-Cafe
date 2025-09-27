@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head id="head">
+    <!--<link rel="stylesheet" href="../css/inventario.css"> -->
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <section id="inventorySection" class="price-input">
+    <h2>Actualizar Inventario</h2>
+
+    <div id="inventoryForm" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+      <div class="form-group" style="flex: 1 1 200px; min-width: 180px;">
+        <label for="bodegaSelectInventory">Seleccione Bodega</label>
+        <select id="bodegaSelectInventory">
+          <option value=""> Seleccione Bodega </option>
+        </select>
+      </div>
+
+      <div class="form-group" style="flex: 1 1 200px; min-width: 180px;">
+        <label for="productoSelectInventory">Seleccione Producto</label>
+        <select id="productoSelectInventory">
+          <option value=""> Seleccione Producto </option>
+        </select>
+      </div>
+
+      <div class="form-group" style="flex: 1 1 150px; min-width: 120px;">
+        <label for="stockInput">Cantidad a agregar</label>
+        <input type="number" id="stockInput" min="1" placeholder="Cantidad">
+      </div>
+    </div>
+
+    <div id="center-buttons">
+      <button id="updateInventoryBtn">Actualizar Inventario</button>
+    </div>
+
+    <h3>Inventario Actual</h3>
+    <table id="inventarioTable">
+      <thead>
+        <tr>
+          <th>Codigo Movimiento</th>
+          <th>Bodega</th>
+          <th>Producto</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <div id="footer"></div>
+
+  <script src="../js/inic.js"></script>
+  <script src="../js/inventario.js"></script>
+</body>
+</html>
