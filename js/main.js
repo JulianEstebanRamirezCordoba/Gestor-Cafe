@@ -63,6 +63,7 @@ async function precioCafe() {
         valor = (datos.valor).toLocaleString('es-CO');
 
         document.getElementById("precioCafe").textContent = `${valor} COP`;
+        return (datos.valor);
     } catch (error) {
         console.error("Error al leer el JSON:", error);
     }
@@ -204,7 +205,7 @@ function dibujarGraficoInventarioPastel(datos) {
 /// Graficas de procesos inferiores y derivadas de los precios del cafe a nivela nacional ...
 function dibujarGraficoCafe() {
     const ctx = document.getElementById('graficoCafe').getContext('2d');
-    const precioNacional = 2920000; 
+    const precioNacional = precioCafe(); 
 
     const nombresBodegas = bodegas.map(b => b.nombre);
     const valoresBodegas = bodegas.map(b => b.valorSaco);
