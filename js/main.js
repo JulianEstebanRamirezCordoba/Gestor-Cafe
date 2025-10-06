@@ -34,10 +34,12 @@ if (!inventario || !Array.isArray(inventario)) {
     localStorage.setItem('inventario', JSON.stringify(inventario));
 }
 
+// Variables para el formulario de ingreso del precio del café
 const coffeePriceForm = document.getElementById('coffeePriceForm');
 const bodegaSelect = document.getElementById('bodegaSelect');
 const coffeePrice = document.getElementById('coffeePrice');
 
+// Funciones para obtener y manipular datos de las bodegas
 function buscarBodega(codigo) {
     for (let i = 0; i < bodegas.length; i++) {
         if (bodegas[i].codigo === codigo) {
@@ -47,6 +49,26 @@ function buscarBodega(codigo) {
     return null;
 }
 
+// Función para obtener el precio del café desde el JSON generado por el servidor
+async function precioCafe() {
+    try {
+        const response = await fetch("./assets/fonts/datos.json");
+        if (!response.ok) {
+            throw new Error("No se pudo cargar el JSON");
+        }
+
+        const datos = await response.json();
+        console.log("Datos cargados:", datos);
+
+        valor = (datos.valor).toLocaleString('es-CO');
+
+        document.getElementById("precioCafe").textContent = `${valor} COP`;
+    } catch (error) {
+        console.error("Error al leer el JSON:", error);
+    }
+}
+
+// Funciones para cálculos y gráficos de los bultos de cafe
 function calcularCantidadSacos() {
     const stockTotalKg = inventario.reduce((total, item) => total + item.stock, 0);
     const pesoBulto = 120;
@@ -54,12 +76,13 @@ function calcularCantidadSacos() {
     const totalSacosElement = document.getElementById('totalSacos');
 
     if (totalSacosElement) {
-        totalSacosElement.innerText = `${cantidadBultos} bultos (${stockTotalKg} kg)`;
+        totalSacosElement.innerText = `${cantidadBultos} bultos (${stockTotalKg.toLocaleString('es-CO')} kg)`;
     }
 
     return cantidadBultos;
 }
 
+// Función para calcular el valor total del inventario
 function calcularValorTotalCafe() {
     let totalPorBodega = {};
     const valorInventario = document.getElementById('valorInventario');
@@ -71,18 +94,19 @@ function calcularValorTotalCafe() {
     inventario.forEach(item => {
         const bodega = bodegas.find(b => b.codigo === item.codigoBodega);
         if (bodega) {
-            totalPorBodega[bodega.codigo] += item.stock * bodega.valorSaco;
+            totalPorBodega[bodega.codigo] += (item.stock / 120) * bodega.valorSaco;
         }
     });
 
     const totalGeneral = Object.values(totalPorBodega).reduce((acc, val) => acc + val, 0);
-    valorInventario.innerText = `$ ${totalGeneral.toFixed(2)}`;
+    valorInventario.innerText = `$ ${totalGeneral.toLocaleString('es-CO')}`;
     console.log("Valor por bodega:", totalPorBodega);
     console.log("Valor total general:", totalGeneral);
 
     return { totalPorBodega, totalGeneral };
 }
 
+// Función para guardar el precio del café y actualizar el valor del inventario
 coffeePriceForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -116,19 +140,19 @@ coffeePriceForm.addEventListener('submit', (e) => {
     coffeePriceForm.reset();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    calcularCantidadSacos();
-});
-
 /// Graficas de procesos inferiores y derivadas de los datos locales de los valores parciales ...
 function dibujarGraficoInventarioPastel(datos) {
     const ctx = document.getElementById('graficoValores').getContext('2d');
 
     const totalPorBodega = datos.totalPorBodega;
 
-    // Nombres y valores
-    const nombresBodegas = bodegas.map(b => b.nombre);
-    const valoresTotales = bodegas.map(b => totalPorBodega[b.codigo] || 0);
+    // Filtrar solo bodegas con valores
+    const nombresBodegas = Object.keys(totalPorBodega).map(codigo => {
+        const bodega = bodegas.find(b => b.codigo === codigo);
+        return bodega ? bodega.nombre : codigo;
+    });
+
+    const valoresTotales = Object.values(totalPorBodega);
 
     new Chart(ctx, {
         type: 'doughnut',
@@ -176,7 +200,6 @@ function dibujarGraficoInventarioPastel(datos) {
         }
     });
 }
-
 
 /// Graficas de procesos inferiores y derivadas de los precios del cafe a nivela nacional ...
 function dibujarGraficoCafe() {
@@ -226,25 +249,29 @@ function dibujarGraficoCafe() {
     });
 }
 
+// Función para calcular el número de bultos por bodega
 function calcularBultosPorBodega() {
     let totalPorBodega = {};
     bodegas.forEach(b => totalPorBodega[b.codigo] = 0);
 
     inventario.forEach(item => {
         if(totalPorBodega[item.codigoBodega] !== undefined) {
-            totalPorBodega[item.codigoBodega] += item.stock;
+            totalPorBodega[item.codigoBodega] += item.stock / 120;
         }
     });
 
     return totalPorBodega;
 }
 
+// Función para dibujar gráfico de bultos por bodega
 function dibujarGraficoBultos() {
     const ctx = document.getElementById('graficoBultos').getContext('2d');
 
     const totalPorBodega = calcularBultosPorBodega();
     const nombresBodegas = bodegas.map(b => b.nombre);
     const valoresBultos = bodegas.map(b => totalPorBodega[b.codigo] || 0);
+
+    // valoresBultos = valoresBultos / 120;
 
     new Chart(ctx, {
         type: 'bar',
@@ -282,13 +309,12 @@ function dibujarGraficoBultos() {
     });
 }
 
+// Inicializar todo al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
+    precioCafe();
+    calcularCantidadSacos();
     dibujarGraficoCafe();
     dibujarGraficoBultos();
-});
-
-document.addEventListener('DOMContentLoaded', () => {
     let arreglo_date = calcularValorTotalCafe();
     dibujarGraficoInventarioPastel(arreglo_date);
-    
 });
